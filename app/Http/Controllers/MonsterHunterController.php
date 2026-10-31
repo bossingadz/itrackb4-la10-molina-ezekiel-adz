@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\Platform;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MonsterHunterController extends Controller
 {
     public function index(Request $request)
     {
-        $platform = $request->query('platform', 'all');
-        $priceRange = $request->query('price_range', 'all');
+        DB::enableQueryLog();
 
-        $query = Game::query();
+        $platformId = $request->query('platform');
+        $priceRange = $request->query('price_range');
 
-        if ($platform !== 'all') {
-            $query->whereRaw('LOWER(platform) = ?', [strtolower($platform)]);
+        $query = Game::with('platform');
+
+        if ($platformId && $platformId !== 'all') {
+            $query->where('platform_id', $platformId);
         }
 
         if ($priceRange === 'budget') {
@@ -25,24 +29,27 @@ class MonsterHunterController extends Controller
         }
 
         $games = $query->get()->keyBy('id');
+        $platforms = Platform::all();
 
         return view('monsterhunters.index', [
             'games' => $games,
-            'currentPlatform' => $platform,
-            'currentPriceRange' => $priceRange,
+            'platforms' => $platforms,
+            'currentPlatform' => $platformId ?? 'all',
+            'currentPriceRange' => $priceRange ?? 'all',
         ]);
     }
 
     public function create()
     {
-        return view('monsterhunters.create');
+        $platforms = Platform::all();
+        return view('monsterhunters.create', compact('platforms'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|min:3|max:200',
-            'platform' => 'required|in:Base Game,Expansion',
+            'platform_id' => 'required|exists:platforms,id',
             'price' => 'required|numeric|min:1',
             'stock' => 'required|integer|min:1|max:100',
         ]);

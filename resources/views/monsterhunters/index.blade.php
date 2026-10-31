@@ -13,8 +13,12 @@
         <span class="fw-semibold me-2">Platform</span>
         <div class="d-inline-flex flex-wrap gap-2">
             <a class="btn btn-sm btn-outline-secondary" href="{{ route('monsterhunters.index', ['platform' => 'all', 'price_range' => $currentPriceRange]) }}">All</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ route('monsterhunters.index', ['platform' => 'Base Game', 'price_range' => $currentPriceRange]) }}">Base Games</a>
-            <a class="btn btn-sm btn-outline-secondary" href="{{ route('monsterhunters.index', ['platform' => 'Expansion', 'price_range' => $currentPriceRange]) }}">Expansions</a>
+            
+            @foreach ($platforms as $platformItem)
+                <a class="btn btn-sm btn-outline-secondary" href="{{ route('monsterhunters.index', ['platform' => $platformItem->id, 'price_range' => $currentPriceRange]) }}">
+                    {{ $platformItem->name }}
+                </a>
+            @endforeach
         </div>
     </div>
 
@@ -46,13 +50,15 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>
-                    <a href="{{ route('monsterhunters.show', ['monsterhunter' => $game['id']]) }}">
-                        {{ $game['title'] }}
+                    <a href="{{ route('monsterhunters.show', ['monsterhunter' => $game->id]) }}">
+                        {{ $game->title }}
                     </a>
                 </td>
-                <td>{{ $game['platform'] }}</td>
-                <td>₱{{ number_format($game['price'], 2) }}</td>
-                <td>{{ $game['stock'] }}</td>
+
+                <td>{{ $game->platform->name }}</td>
+
+                <td>₱{{ number_format($game->price, 2) }}</td>
+                <td>{{ $game->stock }}</td>
             </tr>
         @empty
             <tr>
@@ -62,5 +68,8 @@
     </tbody>
 </table>
 </div>
+
+<p class="mt-3 text-danger fw-bold">Queries: {{ count(\Illuminate\Support\Facades\DB::getQueryLog()) }}</p>
+
 <p class="text-center text-muted mt-4">Prepared By: Ezekiel Adz F. Molina | BSIT 4C</p>
 @endsection

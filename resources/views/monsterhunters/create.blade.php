@@ -7,36 +7,38 @@
     @csrf
 
     <p>
-        <label>Title:</label><br>
-        <input type="text" name="title" value="{{ old('title') }}">
-        @error('title') <span style="color: red;">{{ $message }}</span> @enderror
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ old('title') }}" class="form-control">
+        @error('title') <span class="text-danger">{{ $message }}</span> @enderror
     </p>
 
+    <!-- Requirement E2 & E3: Dropdown built from lookup table using ID as value -->
     <p>
-        <label>Platform:</label><br>
-        <select name="platform">
-            <option value="">-- Select --</option>
-            <option value="Base Game" @selected(old('platform') == 'Base Game')>Base Game</option>
-            <option value="Expansion" @selected(old('platform') == 'Expansion')>Expansion</option>
+        <label for="platform_id">Platform:</label><br>
+        <select id="platform_id" name="platform_id" class="form-select">
+            <option value="">-- Select Platform --</option>
+            @foreach ($platforms as $platformItem)
+                <option value="{{ $platformItem->id }}" @selected(old('platform_id') == $platformItem->id)>
+                    {{ $platformItem->name }}
+                </option>
+            @endforeach
         </select>
-        @error('platform') <span style="color: red;">{{ $message }}</span> @enderror
+        @error('platform_id') <span class="text-danger">{{ $message }}</span> @enderror
     </p>
 
     <p>
-        <label>Price (₱):</label><br>
-        <input type="text" name="price" value="{{ old('price') }}">
-        @error('price') <span style="color: red;">{{ $message }}</span> @enderror
+        <label for="price">Price (₱):</label><br>
+        <input type="text" id="price" name="price" value="{{ old('price') }}" class="form-control">
+        @error('price') <span class="text-danger">{{ $message }}</span> @enderror
     </p>
 
     <p>
-        <label>Stock Quantity:</label><br>
-        <input type="number" name="stock" value="{{ old('stock') }}">
-        @error('stock') <span style="color: red;">{{ $message }}</span> @enderror
+        <label for="stock">Stock Quantity:</label><br>
+        <input type="number" id="stock" name="stock" value="{{ old('stock') }}" class="form-control">
+        @error('stock') <span class="text-danger">{{ $message }}</span> @enderror
     </p>
 
-    <p>
-        <button type="submit">Save</button>
-        <a href="{{ route('monsterhunters.index') }}">Cancel</a>
-    </p>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ route('monsterhunters.index') }}" class="btn btn-secondary">Cancel</a>
 </form>
 @endsection

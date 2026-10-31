@@ -3,10 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Game extends Model
 {
-    protected $fillable = ['title', 'platform', 'price', 'stock', 'is_featured', 'description'];
+    protected $fillable = [
+        'title', 
+        'platform_id', 
+        'price', 
+        'stock', 
+        'is_featured', 
+        'description'
+    ];
 
     protected function casts(): array
     {
@@ -15,5 +23,10 @@ class Game extends Model
             'is_featured' => 'boolean',
             'price' => 'decimal:2',
         ];
+    }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
     }
 }
