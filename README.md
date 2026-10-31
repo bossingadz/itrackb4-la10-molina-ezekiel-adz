@@ -64,3 +64,15 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+# Learning Activity 10 — Monster Hunter Lookup Table
+
+G1: Which column did you turn into a table, and why that one and not another?
+I converted platform into a platforms lookup table because platform categories repeat across records and can be extended with attributes. title, price, and stock are unique or numeric, making platform the only column that represents a reusable entity.
+
+G2: What number did screenshot 6 show, and why exactly that number?
+It showed 8 queries (2 setup queries + 6 lazy-loading queries). Two queries fetched the main game records and filter data, and as the Blade view iterated through each row, Eloquent executed 6 additional queries (one per row) to lazy-load each platform relationship.
+
+G3: Your belongsTo method is named in the singular. What would break if you made it plural?
+Eloquent would look for a foreign key named platforms_id on the table instead of platform_id. Since that column does not exist in the database, Laravel would throw a QueryException.
