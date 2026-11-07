@@ -21,4 +21,12 @@ class MonsterHunterRoutesTest extends TestCase
         $response->assertOk();
         $response->assertSee('Monster Hunter: World');
     }
+
+    public function test_monster_hunter_edit_page_prefills_existing_values(): void
+    {
+        $response = $this->get('/monsterhunters/1/edit');
+
+        $response->assertOk();
+        $response->assertSee('value="Monster Hunter: World"', false);
+    }
 }

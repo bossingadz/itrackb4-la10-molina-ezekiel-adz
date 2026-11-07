@@ -43,6 +43,7 @@
             <th>Platform</th>
             <th>Price</th>
             <th>Stock</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -59,6 +60,14 @@
 
                 <td>₱{{ number_format($game->price, 2) }}</td>
                 <td>{{ $game->stock }}</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ route('monsterhunters.edit', ['monsterhunter' => $game->id]) }}">Edit</a>
+
+                    <form method="POST" action="{{ route('monsterhunters.destroy', ['monsterhunter' => $game->id]) }}" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this game?')">Delete</button>
+                    </form>
             </tr>
         @empty
             <tr>

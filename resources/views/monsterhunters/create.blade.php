@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Add New Game')
 @section('content')
-<h2>Add New Game</h2>
+<h2> Add New Game</h2>
 
 <form method="POST" action="{{ route('monsterhunters.store') }}">
     @csrf
@@ -12,7 +12,6 @@
         @error('title') <span class="text-danger">{{ $message }}</span> @enderror
     </p>
 
-    <!-- Requirement E2 & E3: Dropdown built from lookup table using ID as value -->
     <p>
         <label for="platform_id">Platform:</label><br>
         <select id="platform_id" name="platform_id" class="form-select">

@@ -60,19 +60,44 @@ class MonsterHunterController extends Controller
             ->with('success', 'New record added successfully!');
     }
 
-    public function show(string $id)
+    public function show(Game $monsterhunter)
     {
-        $game = Game::findOrFail($id);
-        return view('monsterhunters.show', compact('game'));
+        return view('monsterhunters.show', ['game' => $monsterhunter]);
+    }
+
+    public function edit(Game $monsterhunter)
+    {
+        $platforms = Platform::all();
+        return view('monsterhunters.edit', [
+            'game' => $monsterhunter,
+            'platforms' => $platforms,
+        ]);
+    }
+
+    public function update(Request $request, Game $monsterhunter)
+    {
+        $validated = $request->validate([
+            'title' => 'required|min:3|max:200',
+            'platform_id' => 'required|exists:platforms,id',
+            'price' => 'required|numeric|min:1',
+            'stock' => 'required|integer|min:1|max:100',
+        ]);
+
+        $monsterhunter->update($validated);
+
+        return redirect()->route('monsterhunters.index') ->with('success', 'Record updated successfully!');
+    }
+
+    public function destroy(Game $monsterhunter)
+    {
+        $monsterhunter->delete();
+
+        return redirect()->route('monsterhunters.index');
     }
 
     public function featured()
     {
-        $game = Game::findOrFail(5);
+        $game = Game::first();
         return view('monsterhunters.show', compact('game'));
     }
-
-    public function edit(string $id) {}
-    public function update(Request $request, string $id) {}
-    public function destroy(string $id) {}
 }

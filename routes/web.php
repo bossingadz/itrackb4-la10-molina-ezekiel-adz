@@ -21,6 +21,4 @@ Route::get('/monsterhunters/filter/{value?}', function ($value = null) {
     return redirect()->route('monsterhunters.index');
 });
 
-Route::resource('monsterhunters', MonsterHunterController::class)
-    ->only(['index', 'show', 'create', 'store'])
-    ->names('monsterhunters');
+Route::resource('monsterhunters', MonsterHunterController::class);

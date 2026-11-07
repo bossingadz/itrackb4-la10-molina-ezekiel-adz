@@ -76,3 +76,14 @@ It showed 8 queries (2 setup queries + 6 lazy-loading queries). Two queries fetc
 
 G3: Your belongsTo method is named in the singular. What would break if you made it plural?
 Eloquent would look for a foreign key named platforms_id on the table instead of platform_id. Since that column does not exist in the database, Laravel would throw a QueryException.
+
+# Learning Activity 11 — Monster Hunter CRUD
+
+G1: Route model binding needs two things to be true. Name both, and say what happens when only one of them is.
+Route model binding requires the controller parameter to be type-hinted with the model class (Game), and its variable name ($monsterhunter) must match the route resource segment name ({monsterhunter}) exactly. If only the type-hint is correct but the variable name is wrong, Laravel will fail to inject the model instance silently, resulting in $monsterhunter being null or uninitialized without throwing an explicit error.
+
+G2: Your Delete link opened the detail page instead of deleting anything. Explain why.
+HTML <a> links can only issue HTTP GET requests. In Laravel resource routing, GET /monsterhunters/{monsterhunter} maps directly to the show() method, whereas destroy() requires an HTTP DELETE request sent via a form with @method('DELETE').
+
+G3: old() takes a second argument on your edit form. What would break if you left it out, and what would break if you used only it?
+If the second fallback argument is left out, the form fields will render completely blank when first loaded because no session flash data exists yet. If only the second argument was used without old(), failed validation re-submissions would overwrite user-entered inputs back to the database defaults instead of retaining the submitted values.
