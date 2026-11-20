@@ -68,22 +68,46 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 # Learning Activity 10 — Monster Hunter Lookup Table
 
-G1: Which column did you turn into a table, and why that one and not another?
+1: Which column did you turn into a table, and why that one and not another?
 I converted platform into a platforms lookup table because platform categories repeat across records and can be extended with attributes. title, price, and stock are unique or numeric, making platform the only column that represents a reusable entity.
 
-G2: What number did screenshot 6 show, and why exactly that number?
+2: What number did screenshot 6 show, and why exactly that number?
 It showed 8 queries (2 setup queries + 6 lazy-loading queries). Two queries fetched the main game records and filter data, and as the Blade view iterated through each row, Eloquent executed 6 additional queries (one per row) to lazy-load each platform relationship.
 
-G3: Your belongsTo method is named in the singular. What would break if you made it plural?
+3: Your belongsTo method is named in the singular. What would break if you made it plural?
 Eloquent would look for a foreign key named platforms_id on the table instead of platform_id. Since that column does not exist in the database, Laravel would throw a QueryException.
 
 # Learning Activity 11 — Monster Hunter CRUD
 
-G1: Route model binding needs two things to be true. Name both, and say what happens when only one of them is.
+1: Route model binding needs two things to be true. Name both, and say what happens when only one of them is.
 Route model binding requires the controller parameter to be type-hinted with the model class (Game), and its variable name ($monsterhunter) must match the route resource segment name ({monsterhunter}) exactly. If only the type-hint is correct but the variable name is wrong, Laravel will fail to inject the model instance silently, resulting in $monsterhunter being null or uninitialized without throwing an explicit error.
 
-G2: Your Delete link opened the detail page instead of deleting anything. Explain why.
+2: Your Delete link opened the detail page instead of deleting anything. Explain why.
 HTML <a> links can only issue HTTP GET requests. In Laravel resource routing, GET /monsterhunters/{monsterhunter} maps directly to the show() method, whereas destroy() requires an HTTP DELETE request sent via a form with @method('DELETE').
 
-G3: old() takes a second argument on your edit form. What would break if you left it out, and what would break if you used only it?
+3: old() takes a second argument on your edit form. What would break if you left it out, and what would break if you used only it?
 If the second fallback argument is left out, the form fields will render completely blank when first loaded because no session flash data exists yet. If only the second argument was used without old(), failed validation re-submissions would overwrite user-entered inputs back to the database defaults instead of retaining the submitted values.
+
+# Learning Activity 12 — Make the Failures Yours
+
+1: The top of your error page named a file inside vendor. Say why that was not where your mistake was, and where the page showed you it actually was.
+The top of the error page referenced a file under vendor/laravel/framewor because that is where Laravel's internal query builder dispatched the missing method call. The actual mistake originated inside app/Http/Controllers/MonsterHunterController.php on the line calling Game::withh('platform')`, which was clearly identified down in the expanded application stack trace frame.
+
+2: You wrote one Log::info line with a context array. Name something it will tell you next month that the error page could not.
+The Log::info context array records the specific database primary key (id) of the modified Game record at the exact moment of creation or update. An error stack trace only captures unhandled runtime crashes, whereas context logging provides a historical audit trail showing which specific records were successfully modified and when.
+
+3: Your guard answers with 403 instead of redirecting back with a message. Say when each of the two is the better answer.
+A 403 Forbidden status is appropriate for strict authorization or data integrity rule violations (such as attempting to delete the final Game in a Platform category) where the request is fundamentally unauthorized. Redirecting back with a session alert is better for recoverable user input mistakes or soft validation failures during normal web navigation.
+
+# Learning Activity 13 — Open the Front Door
+
+1: Your HomeController is not a resource controller. Name two things an index() on a resource controller does that yours does not have to.
+Unlike MonsterHunterController@index, HomeController@index does not have to accept a Request parameter to parse search/filter query strings, nor does it need to build dynamic Eloquent query chains with pagination (paginate()->withQueryString()). It simply executes static Game::count() and Platform::count() queries and passes those integers to the landing view.
+
+2: Your pagination links lost the search term until you added one method. Say what those links contained before, and what the controller therefore received.
+Before adding withQueryString(), the generated pagination links contained only the ?page=2 parameter (e.g., /monsterhunters?page=2) and stripped out search=Monster. Consequently, when clicking page 2, $request->query('search') evaluated to null in MonsterHunterController@index, causing the controller to return the unfiltered dataset.
+
+3: A misspelled sort value does not break your page. Explain why that is worse than an error, and what your allowed list does about it.
+A silent failure is worse than an explicit error because SQLite treats an unrecognized column string as a constant literal in ORDER BY, returning unsorted records without alerting developers or users that the feature is broken. Checking $sort against in_array($sort, ['title', 'price', 'stock']) intercepts invalid or malicious URL parameters and forces a safe fallback to title.
+#   i t r a c k b 4 - l a 1 3 - m o l i n a - e z e k i e l - a d z  
+ 
